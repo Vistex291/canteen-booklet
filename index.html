@@ -1,0 +1,923 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#EAEFEA">
+<title>Petit-déjeuner à la cantine</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%20124%20124%27%3E%3Cpath%20d%3D%27M116%2060%20L92.8%2068.8%20L108.5%2088%20L84%2084%20L88%20108.5%20L68.8%2092.8%20L60%20116%20L51.2%2092.8%20L32%20108.5%20L36%2084%20L11.5%2088%20L27.2%2068.8%20L4%2060%20L27.2%2051.2%20L11.5%2032%20L36%2036%20L32%2011.5%20L51.2%2027.2%20L60%204%20L68.8%2027.2%20L88%2011.5%20L84%2036%20L108.5%2032%20L92.8%2051.2Z%27%20fill%3D%27%23FF5A9E%27%20transform%3D%27translate%285%204%29%27/%3E%3Cpath%20d%3D%27M116%2060%20L92.8%2068.8%20L108.5%2088%20L84%2084%20L88%20108.5%20L68.8%2092.8%20L60%20116%20L51.2%2092.8%20L32%20108.5%20L36%2084%20L11.5%2088%20L27.2%2068.8%20L4%2060%20L27.2%2051.2%20L11.5%2032%20L36%2036%20L32%2011.5%20L51.2%2027.2%20L60%204%20L68.8%2027.2%20L88%2011.5%20L84%2036%20L108.5%2032%20L92.8%2051.2Z%27%20fill%3D%27%23FFD43B%27/%3E%3C/svg%3E">
+<link rel="stylesheet" href="fonts/fonts.css">
+<script>/* motion on, unless the reader asked for less. If the page script fails, show everything after 3 s. */
+(function(R){if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;R.classList.add('motion');setTimeout(function(){if(!window.__booted)R.classList.remove('motion')},3000)})(document.documentElement);</script>
+<style>
+/* Page shell. The :root padding keeps content clear of phone notches (viewport-fit=cover). */
+:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+img{max-width:100%}
+[hidden]{display:none!important}
+/* Layout: one tall printed poster. Big flat shapes live on a fixed canvas behind the page and glide between compositions as you scroll. Headlines sit straight on the poster, details sit on stuck-on paper sheets with cut edges. Left aligned, asymmetric, a little crooked on purpose. */
+:root{
+  --paper:#EAEFEA;
+  --sheet:#F8FAF6;
+  --ink:#1D2150;
+  --blue:#2F6FE0;
+  --pink:#FF5A9E;
+  --yellow:#FFD43B;
+  --green:#18A872;
+  --orange:#FF7A2E;
+  --blue-t:#C4D6F1;
+  --pink-t:#FAD0E0;
+  --yellow-t:#FBE9A0;
+  --green-t:#BEE5D4;
+  --orange-t:#FFD2B0;
+  --shade:rgba(29,33,80,.2);
+  /* motion: one family of curves. out = things arriving, io = things changing state, soft = a small springy settle for touch feedback */
+  --e-out:cubic-bezier(.16,1,.3,1);
+  --e-io:cubic-bezier(.65,0,.35,1);
+  --e-soft:cubic-bezier(.34,1.45,.64,1);
+  --f-display:"Bagel Fat One","Arial Rounded MT Bold","Segoe UI Black","Helvetica Neue",Arial,sans-serif;
+  --f-body:"Bricolage Grotesque","Segoe UI",system-ui,-apple-system,Roboto,Arial,sans-serif;
+  --f-hand:"Caveat","Segoe Print","Bradley Hand","Comic Sans MS",cursive;
+  --wave-h:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='10' viewBox='0 0 40 10'%3E%3Cpath d='M0 5 C6 9 14 1 20 5 S34 9 40 5' fill='none' stroke='%231D2150' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E");
+  --wave-v:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='40' viewBox='0 0 10 40'%3E%3Cpath d='M5 0 C9 6 1 14 5 20 S9 34 5 40' fill='none' stroke='%231D2150' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E");
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 1.0625rem/1.55 var(--f-body);overflow-x:clip;padding-bottom:env(safe-area-inset-bottom,0px)}
+h1,h2,h3,p,ol,ul{margin:0}
+ol,ul{padding:0;list-style:none}
+button{font:inherit;color:inherit;background:none;border:0;padding:0;margin:0;cursor:pointer;text-align:inherit;-webkit-tap-highlight-color:transparent}
+a{color:inherit}
+:focus-visible{outline:3px solid var(--ink);outline-offset:3px}
+.wrap{width:100%;max-width:1240px;margin-inline:auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+
+/* ---------- layers ---------- */
+#world{position:fixed;inset:0;width:100%;height:100%;z-index:-1;display:block;background:var(--paper)}
+.grain{position:fixed;inset:0;z-index:80;pointer-events:none;mix-blend-mode:multiply;opacity:.55;background-size:240px 240px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n' x='0' y='0' width='100%25' height='100%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='2' seed='7' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .11 0 0 0 0 .13 0 0 0 0 .31 0 0 0 1.1 -.42'/%3E%3C/filter%3E%3Crect width='240' height='240' filter='url(%23n)'/%3E%3C/svg%3E")}
+.defs{position:absolute;width:0;height:0;overflow:hidden}
+
+/* ---------- icons ---------- */
+.ico{display:block;width:100%;height:100%;overflow:visible;filter:url(#cut-ico)}
+.fb{fill:var(--blue)}.fp{fill:var(--pink)}.fy{fill:var(--yellow)}.fg{fill:var(--green)}.fo{fill:var(--orange)}.fk{fill:var(--ink)}.fw{fill:var(--sheet)}
+.so{stroke:var(--ink);stroke-width:4;stroke-linejoin:round;stroke-linecap:round}
+.sk,.sb,.sp,.sy,.sw,.sg,.sor{fill:none;stroke-linecap:round;stroke-linejoin:round;stroke-width:5}
+.sk{stroke:var(--ink)}.sb{stroke:var(--blue)}.sp{stroke:var(--pink)}.sy{stroke:var(--yellow)}.sw{stroke:var(--sheet)}.sg{stroke:var(--green)}.sor{stroke:var(--orange)}
+.fm,.mm{mix-blend-mode:multiply}
+
+/* ---------- paper sheets ---------- */
+.sheet{position:relative;isolation:isolate;rotate:var(--rot,0deg)}
+.sheet__sh,.sheet__bg{position:absolute;inset:0;z-index:-1;clip-path:var(--clip,none)}
+.sheet__sh{background:var(--ink);opacity:.18;translate:6px 8px}
+.sheet__bg{background:var(--sheet)}
+.sheet__in{padding:clamp(22px,4.4vw,56px)}
+
+/* ---------- letters ---------- */
+.wd{display:inline-block;white-space:nowrap}
+.l{position:relative;display:inline-block;color:var(--c1,var(--ink))}
+.l::after{content:attr(data-c);position:absolute;left:0;top:0;z-index:-1;color:var(--c2,transparent);transform:translate(.045em,.04em);pointer-events:none}
+
+/* ---------- hero ---------- */
+.hero{position:relative;padding-block:clamp(40px,7vw,96px) clamp(28px,5vw,64px)}
+.hero__in{position:relative;display:grid;gap:clamp(18px,3vw,32px);justify-items:start}
+.title{--T:clamp(3rem,20vw,10.6rem);font:400 var(--T)/.9 var(--f-display);letter-spacing:-.015em;filter:url(#cut-big);mix-blend-mode:multiply;max-width:100%}
+.ln{display:block;white-space:nowrap}
+.ln1,.ln2{--c1:var(--blue);--c2:var(--pink)}
+.ln3,.ln4{--c1:var(--ink);--c2:var(--yellow);font-size:max(.42em,1.4rem);line-height:1.05;padding-left:1.7em}
+.ln3{margin-top:.6em}
+.title{--d0:0ms}
+.burst{position:absolute;right:0;top:0;width:clamp(72px,13vw,160px);aspect-ratio:1;max-width:100%}
+.spin{transform-box:view-box;transform-origin:50% 50%;rotate:var(--br,0deg)}
+@media (max-width:640px){.burst{top:30px}}
+
+/* ---------- section headings ---------- */
+.sec{position:relative;padding-top:clamp(64px,10vw,150px)}
+.hd{position:relative;display:inline-block;max-width:100%;margin-bottom:-14px}
+.h2{--c1:var(--ink);--c2:var(--pink);font:400 clamp(2.5rem,8.4vw,5.8rem)/.94 var(--f-display);letter-spacing:-.012em;filter:url(#cut-mid);rotate:-1.2deg;transform-origin:0 100%;position:relative;z-index:2}
+.sq{display:block;width:min(100%,440px);height:auto;margin-top:-.15em;overflow:visible;position:relative;z-index:3}
+.sq path{fill:none;stroke:var(--sqc,var(--pink));stroke-width:7;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:1;stroke-dashoffset:0;mix-blend-mode:multiply}
+.lede{font:600 clamp(1.1rem,2.3vw,1.5rem)/1.3 var(--f-body);max-width:36ch;text-wrap:balance}
+.note{display:inline-block;font:700 1.5rem/1.1 var(--f-hand);rotate:-2deg}
+/* Bagel Fat One's own capital À puts the accent beside the letter (a bug in the font), so capital À is built
+   from A plus a drawn grave stroke. Write it as <span class="cap-grave">A</span> inside an aria-label="À…" heading. */
+.cap-grave{position:relative;display:inline-block;line-height:1}
+.cap-grave::after{content:"";position:absolute;left:.2em;top:-.02em;width:.3em;height:.12em;border-radius:.06em;background:currentColor;rotate:28deg;transform-origin:100% 50%}
+.tab{display:inline-block;background:var(--ink);color:var(--sheet);font:400 clamp(1.35rem,3vw,2rem)/1.1 var(--f-display);padding:6px 18px 10px;border-radius:14px 20px 12px 18px;rotate:-1.5deg;margin-bottom:clamp(18px,3vw,28px)}
+
+/* ---------- the day (hours) ---------- */
+.day{position:relative;margin-top:clamp(18px,3vw,34px);--s:1}
+.day__line{position:absolute;background:var(--wave-h) repeat-x 0 50%/40px 10px;height:10px;left:0;right:0;top:50%;margin-top:-5px;clip-path:inset(0 calc((1 - var(--s)) * 100%) 0 0)}
+.sun{position:absolute;z-index:3;left:calc(var(--s) * 100%);top:50%;width:76px;height:76px;margin:-38px 0 0 -38px;background:var(--yellow);border-radius:50%}
+.sun::after{content:"";position:absolute;inset:0;border-radius:inherit;background:radial-gradient(circle,var(--pink) 1.6px,transparent 2.3px) 0 0/8px 8px;mix-blend-mode:multiply;-webkit-mask-image:radial-gradient(circle,transparent 24%,#000 80%);mask-image:radial-gradient(circle,transparent 24%,#000 80%)}
+.meal{padding:16px 18px 18px;background:var(--c);border-radius:26px 30px 24px 32px/30px 24px 32px 26px;box-shadow:5px 6px 0 var(--shade);rotate:var(--r,0deg);transition:background-color .35s var(--e-io)}
+.meal.lit{background:var(--k)}
+.meal__t{font:400 clamp(2.2rem,5vw,3rem)/1 var(--f-display)}
+.meal__n{font:700 1.12rem/1.2 var(--f-body)}
+@media (min-width:1080px){
+  .day{height:330px}
+  .meal{position:absolute;width:240px;left:calc(var(--x) * 100%);translate:-50% 0}
+  .meal.up{bottom:calc(50% + 46px)}
+  .meal.dn{top:calc(50% + 46px)}
+}
+@media (max-width:1079px){
+  .day{padding-left:58px;display:grid;gap:18px}
+  .day__line{left:22px;right:auto;top:0;bottom:0;width:10px;height:auto;margin:0;background:var(--wave-v) repeat-y 50% 0/10px 40px;clip-path:inset(0 0 calc((1 - var(--s)) * 100%) 0)}
+  .sun{left:27px;top:calc(var(--s) * 100%)}
+  .meal{max-width:420px}
+}
+
+/* ---------- menu ---------- */
+.cards{display:grid;gap:clamp(24px,3.4vw,44px);grid-template-columns:repeat(auto-fit,minmax(min(100%,310px),1fr));align-items:start;margin-top:clamp(20px,3vw,34px)}
+.card{padding:22px 20px 18px;background:var(--ct);border-radius:34px 28px 36px 26px/28px 36px 26px 34px;box-shadow:6px 7px 0 var(--shade);rotate:var(--r,0deg)}
+.card h3{font:400 clamp(1.7rem,3.2vw,2.2rem)/1 var(--f-display);margin-bottom:8px}
+.dishes{display:grid}
+.dish{padding-block:12px;border-top:3px dashed rgba(29,33,80,.3)}
+.dish__b{display:grid;grid-template-columns:72px 1fr;gap:14px;align-items:center;width:100%}
+.dish__t{display:block;min-width:0}
+.dish:first-child{border-top-color:transparent}
+.dish__ico{width:72px;height:72px}
+.dish__k{display:block;font:700 1.3rem/1 var(--f-hand)}
+.dish__v{display:block;font:700 1.08rem/1.25 var(--f-body)}
+.dish--veg{background:var(--green-t);margin-inline:-10px;padding-inline:10px;border-radius:20px 24px 18px 22px;border-top-color:transparent}
+.badge{display:table;margin-top:6px;padding:2px 12px 4px;background:var(--green);color:var(--ink);border-radius:999px 900px 960px 920px;font:700 .9rem/1.2 var(--f-body)}
+
+/* ---------- self steps ---------- */
+.steps{position:relative;display:grid;gap:clamp(16px,2.6vw,26px);--s:1}
+.rail{position:absolute;top:8px;bottom:8px;left:50%;width:10px;margin-left:-5px;background:var(--wave-v) repeat-y 50% 0/10px 40px;clip-path:inset(0 0 calc((1 - var(--s)) * 100%) 0)}
+.walker{position:absolute;z-index:3;left:50%;top:calc(var(--s) * 100%);width:64px;height:64px;margin:-32px 0 0 -32px}
+.step{position:relative;display:grid;grid-template-columns:1fr 64px 1fr;align-items:center}
+.step__card{grid-row:1;display:flex;align-items:center;gap:16px;max-width:520px;padding:12px 18px 12px 14px;background:var(--ct);border-radius:26px 30px 24px 32px/30px 24px 32px 26px;box-shadow:5px 6px 0 var(--shade)}
+.step__ico{width:76px;height:76px;flex:none}
+.step__txt{display:block;min-width:0}
+article.step:nth-of-type(odd) .step__card{grid-column:1;justify-self:end;flex-direction:row-reverse;text-align:right}
+article.step:nth-of-type(even) .step__card{grid-column:3;justify-self:start}
+.step__n{grid-column:2;grid-row:1;justify-self:center;z-index:2;width:50px;height:50px;display:grid;place-items:center;font:400 1.5rem/1 var(--f-display);background:var(--sheet);border-radius:52% 48% 55% 45%/48% 55% 45% 52%;box-shadow:0 0 0 3px var(--ink)}
+.step__n{transition:background-color .4s var(--e-io)}
+.step.lit .step__n{background:var(--yellow);animation:pop .4s cubic-bezier(.3,.7,.4,1)}
+@media (max-width:759px){
+  .step{grid-template-columns:56px 1fr}
+  .step__n{grid-column:1}
+  article.step:nth-of-type(n) .step__card{grid-column:2;justify-self:stretch;flex-direction:row;text-align:left;max-width:none}
+  .rail{left:28px}
+  .walker{left:28px;width:46px;height:46px;margin:-23px 0 0 -23px}
+}
+
+/* ---------- words, rules, phrases ---------- */
+.fr{display:block;font:700 1.04rem/1.2 var(--f-body)}
+.pl{display:block;font:500 .87rem/1.25 var(--f-body);opacity:.78;transition:opacity .35s var(--e-io),visibility 0s}
+/* Polish stays hidden until the reader taps that item (class rv); tapping again hides it */
+.testable:not(.rv) .pl{visibility:hidden;opacity:0;transition:opacity .25s var(--e-io),visibility 0s linear .25s}
+.item{position:relative;display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 4px 8px;text-align:center}
+.item__ico{position:relative;width:96px;height:96px;margin-bottom:4px}
+.item{--b1:56% 44% 52% 48%/48% 56% 44% 52%;--b2:44% 56% 47% 53%/56% 44% 58% 42%}
+.item:nth-child(4n+2){--b1:47% 53% 42% 58%/53% 47% 55% 45%;--b2:58% 42% 50% 50%/42% 58% 46% 54%}
+.item:nth-child(4n+3){--b1:58% 42% 50% 50%/42% 58% 46% 54%;--b2:52% 48% 55% 45%/48% 55% 45% 52%}
+.item:nth-child(4n){--b1:44% 56% 47% 53%/56% 44% 58% 42%;--b2:47% 53% 42% 58%/53% 47% 55% 45%}
+.item__ico::before{content:"";position:absolute;inset:4% 2% 0 4%;background:var(--c);border-radius:var(--b1);transition:border-radius .8s var(--e-out),scale .6s var(--e-soft)}
+.item__ico .ico{position:relative;transition:transform .6s var(--e-soft)}
+.item:hover .item__ico::before,.item:focus-visible .item__ico::before{border-radius:var(--b2);scale:1.06}
+.item:hover .item__ico .ico,.item:focus-visible .item__ico .ico{transform:translateY(-5px) rotate(-5deg)}
+.item:active .item__ico .ico{transform:scale(.94);transition-duration:.15s}
+.tag,.phrase,.say{transition:transform .45s var(--e-soft),box-shadow .45s var(--e-out)}
+@media (hover:hover){.tag:hover,.phrase:hover,.say:hover{transform:translateY(-3px);box-shadow:6px 8px 0 var(--shade)}}
+.tag:active,.phrase:active,.say:active{transform:scale(.98);transition-duration:.15s}
+.trays{display:grid;gap:clamp(34px,4.6vw,56px) clamp(22px,3vw,40px);grid-template-columns:repeat(auto-fit,minmax(min(100%,400px),1fr));align-items:start}
+.tray{position:relative;padding:clamp(52px,6vw,60px) clamp(12px,2.2vw,26px) clamp(18px,2.6vw,28px);border-radius:36px 30px 40px 28px/30px 40px 28px 36px;background:var(--tc);box-shadow:inset 0 0 0 4px var(--ink),6px 8px 0 var(--shade)}
+.tray__t{position:absolute;left:clamp(16px,3vw,30px);top:-16px;rotate:-2deg;background:var(--ink);color:var(--sheet);padding:6px 16px 9px;font:400 clamp(1.3rem,2.6vw,1.8rem)/1.1 var(--f-display);border-radius:14px 18px 12px 16px}
+.items{display:grid;gap:18px 8px;grid-template-columns:repeat(auto-fill,minmax(108px,1fr))}
+.items .item:nth-child(3n+2){translate:0 10px}
+.items .item:nth-child(3n){translate:0 -4px}
+.tags{display:flex;flex-wrap:wrap;gap:16px 14px;margin-top:clamp(28px,4vw,48px)}
+/* link to the student's Flippity flashcards (opens in a new tab) */
+.cta{display:inline-flex;align-items:center;gap:14px;max-width:100%;margin-top:clamp(30px,4.4vw,52px);padding:10px 28px 12px 14px;background:var(--yellow);color:var(--ink);text-decoration:none;border-radius:30px 26px 32px 24px/26px 32px 24px 30px;box-shadow:inset 0 0 0 4px var(--ink),6px 7px 0 var(--shade);rotate:-1deg;transition:transform .45s var(--e-soft),box-shadow .45s var(--e-out)}
+@media (hover:hover){.cta:hover{transform:translateY(-3px) rotate(-1deg);box-shadow:inset 0 0 0 4px var(--ink),8px 10px 0 var(--shade)}}
+.cta:active{transform:scale(.98);transition-duration:.15s}
+.cta__ico{width:64px;height:64px;flex:none;overflow:visible}
+.cta__h{display:block;font:400 clamp(1.7rem,3.4vw,2.3rem)/1 var(--f-display)}
+.tag{display:flex;align-items:center;gap:10px;padding:8px 20px 8px 8px;background:var(--c);border-radius:48px 40px 52px 38px/40px 52px 38px 48px;box-shadow:4px 5px 0 var(--shade);rotate:var(--r,0deg)}
+.tag__ico{width:56px;height:56px;flex:none}
+.tag__t{display:block}
+.rules{display:grid;gap:clamp(22px,3vw,34px) clamp(14px,2vw,26px);grid-template-columns:repeat(auto-fill,minmax(min(100%,210px),1fr))}
+.rule{align-items:flex-start;text-align:left;padding:8px 6px 10px}
+.rule .item__ico{width:104px;height:104px}
+.rule .fr{font-size:1.08rem}
+@media (max-width:600px){.rules{grid-template-columns:repeat(2,minmax(0,1fr))}.rule .item__ico{width:88px;height:88px}.rule .fr{font-size:1rem}}
+.talk{display:grid;gap:clamp(28px,4vw,56px);grid-template-columns:repeat(auto-fit,minmax(min(100%,400px),1fr));align-items:start}
+.phrases{display:grid;gap:12px}
+.phrase{display:block;padding:12px 18px 13px;background:var(--c);border-radius:22px 28px 20px 30px/28px 20px 30px 22px;box-shadow:4px 5px 0 var(--shade);rotate:var(--r,0deg)}
+.dlg{display:grid;gap:14px}
+.say{display:block;max-width:88%;padding:12px 18px 13px;background:var(--blue-t);border-radius:24px 28px 28px 8px/22px 26px 24px 8px;box-shadow:4px 5px 0 var(--shade)}
+.say.b{justify-self:end;background:var(--pink-t);border-radius:28px 24px 8px 28px/26px 22px 8px 24px}
+.who{display:block;font:700 1.15rem/1 var(--f-hand);margin-bottom:4px}
+
+/* ---------- quiz ---------- */
+.quiz{display:grid;gap:clamp(18px,2.6vw,26px);counter-reset:q;margin-top:clamp(18px,3vw,30px)}
+.q{position:relative;padding:18px 20px;background:var(--ct);border-radius:30px 26px 32px 24px/26px 32px 24px 30px;box-shadow:5px 6px 0 var(--shade)}
+.q__t{display:flex;gap:12px;align-items:flex-start;font:700 1.18rem/1.3 var(--f-body)}
+.q__t::before{counter-increment:q;content:counter(q);flex:none;width:38px;height:38px;display:grid;place-items:center;font:400 1.3rem/1 var(--f-display);background:var(--ink);color:var(--sheet);border-radius:52% 48% 55% 45%/48% 55% 45% 52%}
+.opts{display:flex;flex-wrap:wrap;gap:10px;margin:14px 0 0 50px}
+.opt{padding:9px 16px 10px;background:var(--sheet);border-radius:18px 22px 16px 24px/22px 16px 24px 18px;box-shadow:3px 4px 0 var(--shade);font-weight:600;transition:background-color .25s var(--e-io),transform .45s var(--e-soft)}
+.opt:active{transform:scale(.95);transition-duration:.15s}
+.opt:hover{background:var(--yellow-t)}
+.q.done .opt{pointer-events:none}
+.opt.ok{background:var(--green)}
+.opt.no{background:var(--pink)}
+.q__fb{min-height:1.5em;margin:10px 0 0 50px;font-weight:600}
+.stamp{position:absolute;right:16px;top:-14px;padding:2px 14px 6px;font:400 1.6rem/1.1 var(--f-display);color:var(--ink);background:var(--yellow);border-radius:14px 18px 12px 16px;rotate:-8deg;animation:stp .4s var(--e-soft) backwards}
+.stamp.is-ok{background:var(--green)}
+.stamp.is-no{background:var(--pink)}
+.score{display:flex;flex-wrap:wrap;align-items:center;gap:16px;margin-top:22px;font:400 1.8rem/1 var(--f-display)}
+.again{padding:9px 18px 11px;background:var(--ink);color:var(--sheet);border-radius:18px 22px 16px 24px/22px 16px 24px 18px;font:700 1rem/1 var(--f-body)}
+
+/* ---------- footer ---------- */
+.fin{padding-top:clamp(70px,11vw,160px);padding-bottom:clamp(110px,24vh,300px)}
+.big{font:400 clamp(3.4rem,14.5vw,12rem)/.88 var(--f-display);letter-spacing:-.02em;filter:url(#cut-big);mix-blend-mode:multiply;max-width:100%;margin-bottom:clamp(20px,4vw,48px)}
+.big .l:nth-child(3n+1){--c1:var(--blue);--c2:var(--pink)}
+.big .l:nth-child(3n+2){--c1:var(--pink);--c2:var(--blue)}
+.big .l:nth-child(3n){--c1:var(--ink);--c2:var(--yellow)}
+
+
+/* ---------- motion ----------
+   One rule: things move when they arrive or when the reader does something, then stay still.
+   Everything below only applies under html.motion, which is set in <head> when reduced motion is off. */
+@keyframes rise{from{transform:translateY(150%) rotate(7deg)}to{transform:none}}
+@keyframes lay{from{opacity:0;transform:translateY(16px)}35%{opacity:1}to{opacity:1;transform:none}}
+@keyframes popin{from{opacity:0;transform:translateY(12px) scale(.88) rotate(var(--lr,-4deg))}30%{opacity:1}to{opacity:1;transform:none}}
+@keyframes burst{from{opacity:0;transform:scale(.35) rotate(-140deg)}to{opacity:1;transform:none}}
+@keyframes pop{0%{scale:.85}45%{scale:1.12}100%{scale:1}}
+@keyframes stp{from{opacity:0;scale:1.8;rotate:-20deg}to{opacity:1;scale:1;rotate:-8deg}}
+@keyframes draw{from{stroke-dashoffset:1}to{stroke-dashoffset:0}}
+/* headings: letters rise out of each word's own slot, one after another */
+.motion [data-boil] .wd{clip-path:inset(-.45em -.25em -.32em -.25em)}
+.motion [data-boil] .l{animation:rise .5s var(--e-out) both paused;animation-delay:calc(var(--d0,0ms) + var(--i,0) * 10ms)}
+.motion [data-boil].is-in .l{animation-play-state:running}
+.motion .sq path{animation:draw .45s var(--e-io) .06s both paused}
+.motion .hd.is-in .sq path{animation-play-state:running}
+/* hero extras: once, on load */
+.motion .burst{animation:burst .8s var(--e-out) .05s both}
+/* blocks lay down as they scroll in; small items pop in after them */
+.motion .rise:not(.is-in),.motion .pop:not(.is-in){opacity:0}
+.motion .rise.is-in{animation:lay .42s var(--e-out) var(--d,0ms) backwards}
+.motion .pop.is-in{animation:popin .38s var(--e-soft) var(--d,0ms) backwards}
+/* paper is never see-through: sheets unroll from the top edge instead of fading. The wipe covers one screen height, the rest is below the fold. */
+@keyframes unroll{from{clip-path:inset(-24px -24px 100% -24px);transform:translateY(12px)}to{clip-path:inset(-24px -24px calc(100% - 100vh) -24px);transform:none}}
+.motion .sheet.rise:not(.is-in){opacity:1;clip-path:inset(-24px -24px 100% -24px)}
+.motion .sheet.rise.is-in{animation:unroll .45s var(--e-out) var(--d,0ms) backwards}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+}
+</style>
+</head>
+<body>
+<canvas id="world" aria-hidden="true"></canvas>
+<div class="grain" aria-hidden="true"></div>
+
+<svg class="defs" width="0" height="0" aria-hidden="true" focusable="false">
+<defs>
+  <filter id="cut-big" x="-5%" y="-10%" width="110%" height="120%" color-interpolation-filters="sRGB">
+    <feTurbulence id="tb-big" type="fractalNoise" baseFrequency="0.016 0.022" numOctaves="2" seed="2" result="n"/>
+    <feDisplacementMap in="SourceGraphic" in2="n" scale="12" xChannelSelector="R" yChannelSelector="G"/>
+  </filter>
+  <filter id="cut-mid" x="-5%" y="-12%" width="110%" height="124%" color-interpolation-filters="sRGB">
+    <feTurbulence id="tb-mid" type="fractalNoise" baseFrequency="0.03 0.04" numOctaves="2" seed="5" result="n"/>
+    <feDisplacementMap in="SourceGraphic" in2="n" scale="5" xChannelSelector="R" yChannelSelector="G"/>
+  </filter>
+  <filter id="cut-ico" x="-8%" y="-8%" width="116%" height="116%" color-interpolation-filters="sRGB">
+    <feTurbulence type="fractalNoise" baseFrequency="0.045" numOctaves="2" seed="9" result="n"/>
+    <feDisplacementMap in="SourceGraphic" in2="n" scale="3.4" xChannelSelector="R" yChannelSelector="G"/>
+  </filter>
+</defs>
+
+<symbol id="i-burst" viewBox="0 0 120 120"><path d="M116 60 L92.8 68.8 L108.5 88 L84 84 L88 108.5 L68.8 92.8 L60 116 L51.2 92.8 L32 108.5 L36 84 L11.5 88 L27.2 68.8 L4 60 L27.2 51.2 L11.5 32 L36 36 L32 11.5 L51.2 27.2 L60 4 L68.8 27.2 L88 11.5 L84 36 L108.5 32 L92.8 51.2Z"/></symbol>
+
+<symbol id="i-croissant" viewBox="0 0 120 120"><g transform="translate(0 12)"><ellipse class="fo so" cx="15" cy="66" rx="16" ry="9" transform="rotate(-150 15 66)"/><ellipse class="fo so" cx="105" cy="66" rx="16" ry="9" transform="rotate(-30 105 66)"/><ellipse class="fo so" cx="30.2" cy="49.4" rx="19" ry="14" transform="rotate(-125 30.2 49.4)"/><ellipse class="fo so" cx="89.8" cy="49.4" rx="19" ry="14" transform="rotate(-55 89.8 49.4)"/><ellipse class="fo so" cx="60" cy="40" rx="22" ry="17" transform="rotate(-90 60 40)"/><path class="sy" d="M46 40 C50 35 55 32 61 31"/></g></symbol>
+<symbol id="i-baguette" viewBox="0 0 120 120"><g transform="rotate(-38 60 60)"><rect class="fo so" x="4" y="42" width="112" height="36" rx="18"/><path class="sy" d="M20 52 H100" style="stroke-width:6;opacity:.75"/><path class="sk" d="M26 46 L34 74 M48 46 L56 74 M70 46 L78 74 M92 46 L100 74" style="stroke-width:4"/></g></symbol>
+<symbol id="i-tartine" viewBox="0 0 120 120"><path class="fy so" d="M26 106 V58 C10 52 8 24 34 20 C46 17 54 22 60 24 C66 22 76 17 88 20 C112 24 110 52 94 58 V106Z"/><path class="fp fm" d="M34 58 C32 42 46 36 60 40 C74 36 88 44 86 60 C86 76 70 84 58 82 C42 84 32 74 34 58Z"/></symbol>
+<symbol id="i-jam" viewBox="0 0 120 120"><rect class="fb so" x="34" y="12" width="52" height="18" rx="5"/><path class="fp so" d="M28 34 H92 C98 34 100 40 100 46 V92 C100 102 94 108 84 108 H36 C26 108 20 102 20 92 V46 C20 40 22 34 28 34Z"/><rect class="fw" x="38" y="56" width="44" height="34" rx="8"/><circle class="fy" cx="60" cy="73" r="9"/></symbol>
+<symbol id="i-cereals" viewBox="0 0 120 120"><path class="fb so" d="M10 54 H110 C110 90 90 108 60 108 C30 108 10 90 10 54Z"/><ellipse class="fw so" cx="60" cy="54" rx="50" ry="11"/><circle class="sor" cx="38" cy="50" r="8"/><circle class="sp" cx="62" cy="46" r="8"/><circle class="sor" cx="84" cy="52" r="8"/><circle class="sg" cx="52" cy="58" r="7"/></symbol>
+<symbol id="i-milk" viewBox="0 0 120 120"><path class="fb so" d="M32 44 H88 V108 H32Z"/><path class="fy so" d="M32 44 L46 14 H74 L88 44Z"/><rect class="fw" x="42" y="62" width="36" height="32" rx="7"/><path class="fb" d="M60 66 C53 75 51 79 51 83 a9 9 0 0 0 18 0 C69 79 67 75 60 66Z"/></symbol>
+<symbol id="i-juice" viewBox="0 0 120 120"><path class="fo" d="M30 50 H90 L85 106 H35Z"/><path class="sk" d="M24 24 H96 L88 108 H32Z"/><circle class="fy so" cx="92" cy="26" r="17"/><circle class="fo" cx="92" cy="26" r="10"/><path class="sk" d="M92 18 V34 M84 26 H100" style="stroke-width:2.5"/></symbol>
+<symbol id="i-cocoa" viewBox="0 0 120 120"><path class="sk" d="M36 32 q-7-8 0-15 t0-13 M54 32 q-7-8 0-15 t0-13 M72 32 q-7-8 0-15 t0-13" style="stroke-width:4"/><path class="sp" d="M86 56 C112 52 114 90 86 88" style="stroke-width:11"/><rect class="fp so" x="18" y="42" width="70" height="64" rx="15"/><ellipse class="fk" cx="53" cy="44" rx="32" ry="7"/></symbol>
+
+<symbol id="i-tray" viewBox="0 0 120 120"><rect class="fb so" x="6" y="32" width="108" height="70" rx="15"/><rect class="fw" x="18" y="44" width="84" height="46" rx="9" style="opacity:.6"/><rect class="fw so" x="40" y="35" width="40" height="7" rx="3.5"/></symbol>
+<symbol id="i-plate" viewBox="0 0 120 120"><circle class="fw so" cx="60" cy="60" r="50"/><circle class="sb" cx="60" cy="60" r="35" style="stroke-width:4"/></symbol>
+<symbol id="i-knife" viewBox="0 0 120 120"><path class="fb so" d="M49 66 V20 C49 8 71 8 71 32 V66Z"/><rect class="fk" x="49" y="64" width="22" height="50" rx="9"/></symbol>
+<symbol id="i-fork" viewBox="0 0 120 120"><path class="sb" d="M40 10 V44 C40 58 50 62 60 62 C70 62 80 58 80 44 V10 M60 10 V50" style="stroke-width:9"/><rect class="fk" x="54" y="58" width="12" height="56" rx="6"/></symbol>
+<symbol id="i-spoon" viewBox="0 0 120 120"><ellipse class="fb so" cx="60" cy="34" rx="22" ry="28"/><rect class="fk" x="54" y="58" width="12" height="56" rx="6"/></symbol>
+<symbol id="i-glass" viewBox="0 0 120 120"><path class="fb" d="M31 48 H89 L85 106 H35Z" style="opacity:.9"/><path class="sk" d="M25 20 H95 L87 108 H33Z"/><path class="sw" d="M44 60 L42 92"/></symbol>
+<symbol id="i-cheese" viewBox="0 0 120 120"><path class="fy so" d="M8 92 L98 34 C106 30 114 36 114 46 V92Z"/><path class="fo" d="M26.6 80 H114 V92 H8Z"/><circle class="fw so" cx="72" cy="58" r="8" style="stroke-width:3"/><circle class="fw so" cx="96" cy="52" r="5" style="stroke-width:3"/><circle class="fw so" cx="52" cy="72" r="6" style="stroke-width:3"/></symbol>
+<symbol id="i-apple" viewBox="0 0 120 120"><path class="fp so" d="M60 34 C44 22 14 30 16 66 C18 96 40 112 60 102 C80 112 102 96 104 66 C106 30 76 22 60 34Z"/><path class="sk" d="M60 34 C60 24 62 18 68 12"/><path class="fg so" d="M64 22 C70 6 92 6 98 14 C92 28 76 30 64 22Z"/><path class="sw" d="M30 58 C32 48 38 44 44 42" style="stroke-width:6"/></symbol>
+<symbol id="i-yogurt" viewBox="0 0 120 120"><path class="fp so" d="M24 42 H96 L88 108 H32Z"/><rect class="fb so" x="20" y="28" width="80" height="16" rx="6"/><ellipse class="fw" cx="60" cy="76" rx="21" ry="17"/><circle class="fp" cx="60" cy="76" r="8"/></symbol>
+
+<symbol id="i-carrot" viewBox="0 0 120 120"><path class="fo so" d="M28 40 C28 30 92 30 92 40 L68 108 C65 116 55 116 52 108Z"/><path class="fg so" d="M60 36 C48 24 40 14 30 10 C34 24 44 34 60 36Z"/><path class="fg so" d="M60 36 C72 24 80 14 90 10 C86 24 76 34 60 36Z"/><path class="fg so" d="M60 36 C54 22 54 14 60 4 C66 14 66 22 60 36Z"/><path class="sk" d="M44 56 H58 M62 74 H76 M52 92 H62" style="stroke-width:4"/></symbol>
+<symbol id="i-drumstick" viewBox="0 0 120 120"><path class="sk" d="M44 78 L22 100" style="stroke-width:16"/><path class="sw" d="M44 78 L22 100" style="stroke-width:9"/><circle class="fw so" cx="14" cy="96" r="8"/><circle class="fw so" cx="24" cy="106" r="8"/><path class="fo so" d="M30 70 C12 52 22 22 52 20 C84 16 104 42 90 66 C80 82 56 88 44 84Z"/><path class="sk" d="M50 40 C60 34 72 38 76 46" style="stroke-width:3.5"/></symbol>
+<symbol id="i-pie" viewBox="0 0 120 120"><circle class="fy so" cx="60" cy="60" r="50"/><circle class="fo" cx="60" cy="60" r="38" style="opacity:.55"/><circle class="fg" cx="42" cy="48" r="7"/><circle class="fp" cx="70" cy="44" r="6"/><circle class="fg" cx="50" cy="74" r="6"/><circle class="fp" cx="78" cy="70" r="7"/><circle class="fg" cx="62" cy="60" r="5"/><path class="fw so" d="M60 60 L104.9 38.1 A50 50 0 0 1 104.9 81.9Z"/></symbol>
+<symbol id="i-soup" viewBox="0 0 120 120"><path class="sk" d="M42 36 q-6-8 0-14 t0-12 M62 36 q-6-8 0-14 t0-12 M82 36 q-6-8 0-14 t0-12" style="stroke-width:4"/><path class="fp so" d="M10 52 H110 C110 90 90 108 60 108 C30 108 10 90 10 52Z"/><ellipse class="fo so" cx="60" cy="52" rx="50" ry="11"/><circle class="fg" cx="46" cy="51" r="4"/><circle class="fy" cx="70" cy="53" r="4"/><circle class="fg" cx="84" cy="50" r="3"/></symbol>
+
+<symbol id="i-drop" viewBox="0 0 120 120"><path class="fb so" d="M60 10 C60 10 24 54 24 76 a36 36 0 0 0 72 0 C96 54 60 10 60 10Z"/><path class="sw" d="M42 78 C42 90 50 98 60 100" style="stroke-width:6"/><path class="sp" d="M102 24 l6 -10 M110 42 l10 -2 M94 8 l-2 -8"/></symbol>
+<symbol id="i-clock" viewBox="0 0 120 120"><circle class="fy so" cx="60" cy="60" r="48"/><path class="sk" d="M60 60 V30 M60 60 L82 72" style="stroke-width:6"/><circle class="fk" cx="60" cy="60" r="5"/><path class="sk" d="M60 16 v6 M60 98 v6 M16 60 h6 M98 60 h6" style="stroke-width:4"/></symbol>
+<symbol id="i-mouth" viewBox="0 0 120 120"><path class="fp so" d="M12 60 C28 36 46 40 60 50 C74 40 92 36 108 60 C92 70 74 72 60 72 C46 72 28 70 12 60Z"/><path class="fp so" d="M12 60 C30 100 90 100 108 60 C92 70 74 72 60 72 C46 72 28 70 12 60Z"/><path class="sk" d="M16 60 C34 68 86 68 104 60" style="stroke-width:3.5"/></symbol>
+<symbol id="i-elbow" viewBox="0 0 120 120"><path class="sk" d="M14 36 L44 90 L98 50" style="stroke-width:26"/><path class="sb" d="M14 36 L44 90 L98 50" style="stroke-width:18"/><circle class="fp so" cx="44" cy="90" r="11"/><rect class="fy so" x="8" y="102" width="104" height="10" rx="5"/></symbol>
+<symbol id="i-no" viewBox="0 0 120 120"><circle class="sp" cx="60" cy="60" r="52" style="stroke-width:9"/><path class="sp" d="M23 97 L97 23" style="stroke-width:9"/></symbol>
+<symbol id="i-wave" viewBox="0 0 120 120"><path class="fb so" d="M24 20 H96 A12 12 0 0 1 108 32 V70 A12 12 0 0 1 96 82 H62 L40 104 V82 H24 A12 12 0 0 1 12 70 V32 A12 12 0 0 1 24 20Z"/><circle class="fw" cx="36" cy="51" r="8"/><circle class="fw" cx="60" cy="51" r="5.5"/><circle class="fw" cx="80" cy="51" r="3"/></symbol>
+<symbol id="i-bin" viewBox="0 0 120 120"><path class="fb so" d="M28 40 H92 L86 106 C85 110 82 112 78 112 H42 C38 112 35 110 34 106Z"/><rect class="fk" x="20" y="28" width="80" height="12" rx="6"/><path class="sk" d="M48 20 H72" style="stroke-width:8"/><path class="sw" d="M50 54 V98 M70 54 V98" style="stroke-width:6"/></symbol>
+<symbol id="i-heart" viewBox="0 0 120 120"><path class="fp so" d="M60 104 C18 74 10 42 32 26 C46 16 60 26 60 38 C60 26 74 16 88 26 C110 42 102 74 60 104Z"/><path class="sw" d="M30 44 C32 38 36 35 40 34" style="stroke-width:6"/></symbol>
+<symbol id="i-card" viewBox="0 0 120 120"><rect class="fb so" x="10" y="28" width="100" height="66" rx="10"/><rect class="fk" x="10" y="42" width="100" height="14"/><rect class="fy so" x="20" y="68" width="22" height="16" rx="4"/><path class="sw" d="M54 76 H98"/></symbol>
+<symbol id="i-queue" viewBox="0 0 120 120"><circle class="fy so" cx="22" cy="40" r="11"/><path class="fy so" d="M4 100 C4 68 40 68 40 100Z"/><circle class="fb so" cx="98" cy="40" r="11"/><path class="fb so" d="M80 100 C80 68 116 68 116 100Z"/><circle class="fp so" cx="60" cy="34" r="12"/><path class="fp so" d="M40 104 C40 70 80 70 80 104Z"/></symbol>
+<symbol id="i-bubble" viewBox="0 0 120 120"><path class="fp so" d="M24 18 H96 A12 12 0 0 1 108 30 V70 A12 12 0 0 1 96 82 H62 L40 104 V82 H24 A12 12 0 0 1 12 70 V30 A12 12 0 0 1 24 18Z"/><path class="fk" d="M54 34 H66 L64 62 H56Z"/><circle class="fk" cx="60" cy="70" r="5"/></symbol>
+<symbol id="i-arrow" viewBox="0 0 120 120"><path class="sk" d="M16 86 C26 40 62 26 96 44" style="stroke-width:7"/><path class="sk" d="M78 26 L98 46 L70 54" style="stroke-width:7"/></symbol>
+<symbol id="i-house" viewBox="0 0 120 120"><rect class="fy so" x="22" y="52" width="76" height="56" rx="4"/><path class="fp so" d="M10 56 L60 14 L110 56Z"/><rect class="fb so" x="50" y="76" width="20" height="32" rx="4"/><rect class="fw so" x="28" y="64" width="16" height="14"/><rect class="fw so" x="76" y="64" width="16" height="14"/></symbol>
+<symbol id="i-leaf" viewBox="0 0 120 120"><path class="fg so" d="M16 104 C14 52 52 14 106 14 C108 62 76 106 16 104Z"/><path class="sk" d="M20 100 C44 70 70 44 96 24" style="stroke-width:3.5"/></symbol>
+</svg>
+
+
+<main lang="fr">
+
+<header class="hero" id="top" data-scene="0">
+  <div class="wrap hero__in">
+    <svg class="burst" viewBox="0 0 120 120" aria-hidden="true"><g class="spin"><use class="fp mm" href="#i-burst" x="5" y="4"/><use class="fy mm" href="#i-burst"/></g></svg>
+    <h1 class="title" data-boil aria-label="Le petit-déjeuner et les repas à la cantine">
+      <span class="ln ln1">Le petit-</span>
+      <span class="ln ln2">déjeuner</span>
+      <span class="ln ln3">et les repas</span>
+      <span class="ln ln4">à la cantine</span>
+    </h1>
+    </div>
+  </div>
+</header>
+
+<section class="sec" id="horaires" data-scene="1">
+  <div class="wrap">
+    <div class="hd"><h2 class="h2" data-boil>Les horaires</h2><svg class="sq" viewBox="0 0 320 20" aria-hidden="true"><path pathLength="1" d="M4 12 C30 2 52 20 82 10 S134 2 164 12 S224 20 250 9 S300 6 316 11"/></svg></div>
+    <div class="sheet" style="--rot:.3deg"><i class="sheet__sh"></i><i class="sheet__bg"></i>
+      <div class="sheet__in">
+        <div class="day" data-prog>
+          <div class="day__line"></div>
+          <div class="sun" aria-hidden="true"></div>
+          <article class="meal up" data-lit style="--x:.14;--c:var(--yellow-t);--k:var(--yellow);--r:-1.5deg">
+            <p class="meal__t">7 h</p>
+            <h3 class="meal__n">Le petit-déjeuner</h3>
+          </article>
+          <article class="meal dn" data-lit style="--x:.47;--c:var(--orange-t);--k:var(--orange);--r:1.2deg">
+            <p class="meal__t">11 h 30</p>
+            <h3 class="meal__n">Le déjeuner</h3>
+          </article>
+          <article class="meal up" data-lit style="--x:.68;--c:var(--pink-t);--k:var(--pink);--r:1.4deg">
+            <p class="meal__t">16 h</p>
+            <h3 class="meal__n">Le goûter</h3>
+          </article>
+          <article class="meal dn" data-lit style="--x:.86;--c:var(--green-t);--k:var(--green);--r:-1.2deg">
+            <p class="meal__t">19 h</p>
+            <h3 class="meal__n">Le dîner</h3>
+          </article>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="menu" data-scene="2">
+  <div class="wrap">
+    <div class="hd"><h2 class="h2" data-boil style="--c2:var(--yellow)">Le menu</h2><svg class="sq" style="--sqc:var(--orange)" viewBox="0 0 320 20" aria-hidden="true"><path pathLength="1" d="M4 12 C30 2 52 20 82 10 S134 2 164 12 S224 20 250 9 S300 6 316 11"/></svg></div>
+    <div class="sheet" style="--rot:-.35deg"><i class="sheet__sh"></i><i class="sheet__bg"></i>
+      <div class="sheet__in">
+        <div class="cards">
+          <article class="card" style="--ct:var(--blue-t);--r:-.7deg"><h3>Le petit-déjeuner</h3><ul class="dishes" id="m-bk"></ul></article>
+          <article class="card" style="--ct:var(--yellow-t);--r:.6deg"><h3>Le déjeuner</h3><ul class="dishes" id="m-lu"></ul></article>
+          <article class="card" style="--ct:var(--pink-t);--r:-.4deg"><h3>Le dîner</h3><ul class="dishes" id="m-di"></ul></article>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="regles" data-scene="3">
+  <div class="wrap">
+    <div class="hd"><h2 class="h2" data-boil style="--c2:var(--blue)">Les règles</h2><svg class="sq" style="--sqc:var(--blue)" viewBox="0 0 320 20" aria-hidden="true"><path pathLength="1" d="M4 12 C30 2 52 20 82 10 S134 2 164 12 S224 20 250 9 S300 6 316 11"/></svg></div>
+    <div class="sheet" style="--rot:.4deg"><i class="sheet__sh"></i><i class="sheet__bg"></i>
+      <div class="sheet__in">
+        <div class="steps" data-prog data-axis="y" id="steps">
+          <div class="rail"></div>
+          <div class="walker" aria-hidden="true"><svg class="ico" viewBox="0 0 120 120"><use href="#i-tray"/></svg></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="savoir" data-scene="4">
+  <div class="wrap">
+    <div class="hd"><h2 class="h2" data-boil style="--c2:var(--orange)">Le savoir-vivre</h2><svg class="sq" style="--sqc:var(--pink)" viewBox="0 0 320 20" aria-hidden="true"><path pathLength="1" d="M4 12 C30 2 52 20 82 10 S134 2 164 12 S224 20 250 9 S300 6 316 11"/></svg></div>
+    <div class="sheet" style="--rot:-.4deg"><i class="sheet__sh"></i><i class="sheet__bg"></i>
+      <div class="sheet__in">
+        <div class="rules" id="rules"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="mots" data-scene="5">
+  <div class="wrap">
+    <div class="hd"><h2 class="h2" data-boil style="--c2:var(--green)">Les mots</h2><svg class="sq" style="--sqc:var(--green)" viewBox="0 0 320 20" aria-hidden="true"><path pathLength="1" d="M4 12 C30 2 52 20 82 10 S134 2 164 12 S224 20 250 9 S300 6 316 11"/></svg></div>
+    <div class="sheet" style="--rot:.3deg"><i class="sheet__sh"></i><i class="sheet__bg"></i>
+      <div class="sheet__in">
+        <div class="trays" style="margin-top:clamp(34px,5vw,56px)">
+          <div class="tray" style="--tc:var(--pink-t)"><h3 class="tray__t">Le petit-déjeuner</h3><div class="items" id="g-bk"></div></div>
+          <div class="tray" style="--tc:var(--blue-t)"><h3 class="tray__t">Sur le plateau</h3><div class="items" id="g-self"></div></div>
+        </div>
+        <div class="tags" id="g-tags"></div>
+        <a class="cta" href="https://www.flippity.net/v2/fc.php?k=e/2PACX-1vQDybd6cyirKoh4l4owXCn-_GBfGX996hNGS8-fDog4eVu83ym4N549ZQLxwumK2VPmDa9907vhlem8" target="_blank" rel="noopener noreferrer" aria-label="Les cartes (Flippity, nouvel onglet)">
+          <svg class="cta__ico" viewBox="0 0 120 120" aria-hidden="true"><g transform="rotate(-10 52 64)"><rect class="fp so" x="14" y="30" width="62" height="78" rx="9"/></g><g transform="rotate(8 66 58)"><rect class="fy so" x="34" y="20" width="62" height="78" rx="9"/><path class="sk" d="M50 46 H80 M50 60 H74"/></g><path class="sk" d="M100 70 q8 8 0 16 M108 62 q16 16 0 32" style="stroke-width:5"/></svg>
+          <span class="cta__h">Les cartes</span>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="parler" data-scene="6">
+  <div class="wrap">
+    <div class="hd"><h2 class="h2" data-boil>On parle</h2><svg class="sq" viewBox="0 0 320 20" aria-hidden="true"><path pathLength="1" d="M4 12 C30 2 52 20 82 10 S134 2 164 12 S224 20 250 9 S300 6 316 11"/></svg></div>
+    <div class="sheet" style="--rot:-.3deg"><i class="sheet__sh"></i><i class="sheet__bg"></i>
+      <div class="sheet__in">
+        <div class="talk">
+          <div><h3 class="tab">Phrases utiles</h3><div class="phrases" id="phrases"></div></div>
+          <div><h3 class="tab">Au self</h3><div class="dlg" id="dlg"></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="quiz" data-scene="7">
+  <div class="wrap">
+    <div class="hd"><h2 class="h2" data-boil style="--c2:var(--yellow)">Le quiz</h2><svg class="sq" style="--sqc:var(--orange)" viewBox="0 0 320 20" aria-hidden="true"><path pathLength="1" d="M4 12 C30 2 52 20 82 10 S134 2 164 12 S224 20 250 9 S300 6 316 11"/></svg></div>
+    <div class="sheet" style="--rot:.35deg"><i class="sheet__sh"></i><i class="sheet__bg"></i>
+      <div class="sheet__in">
+        <ol class="quiz" id="quiz-list"></ol>
+        <div class="score"><span id="score" role="status" aria-live="polite">0 / 5</span><button class="again" id="again" type="button">Recommencer</button></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="sec fin" id="fin" data-scene="8">
+  <div class="wrap">
+    <h2 class="big" data-boil aria-label="Bon appétit !">Bon appétit&nbsp;!</h2>
+  </div>
+</footer>
+
+</main>
+
+<script>
+(function(){
+'use strict';
+const D=document,R=D.documentElement;
+const $=(s,r=D)=>r.querySelector(s),$$=(s,r=D)=>Array.from(r.querySelectorAll(s));
+const clamp=(v,a,b)=>v<a?a:v>b?b:v,lerp=(a,b,t)=>a+(b-a)*t,ss=t=>{t=clamp(t,0,1);return t*t*(3-2*t)};
+const safe=fn=>{try{fn()}catch(e){console.error(e)}};
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const cs=getComputedStyle(R);
+const tok=(n,d)=>cs.getPropertyValue(n).trim()||d;
+const COL={blue:tok('--blue','#2F6FE0'),pink:tok('--pink','#FF5A9E'),yellow:tok('--yellow','#FFD43B'),green:tok('--green','#18A872'),ink:tok('--ink','#1D2150'),paper:tok('--paper','#EAEFEA'),orange:tok('--orange','#FF7A2E'),sheet:tok('--sheet','#F8FAF6')};
+
+/* ---------- content ---------- */
+const CY=['yellow','pink','blue','green','orange'];
+const svg=inner=>`<svg class="ico" viewBox="0 0 120 120" aria-hidden="true">${inner}</svg>`;
+const use=id=>`<use href="#i-${id}"/>`;
+const item=(inner,fr,pl,i,cls)=>`<button class="item testable ${cls||''}" type="button" style="--c:var(--${CY[i%5]}-t);--n:${i}"><span class="item__ico">${svg(inner)}</span><span class="fr">${fr}</span><span class="pl" lang="pl">${pl}</span></button>`;
+const dish=(ic,k,v,pl,veg)=>`<li class="dish${veg?' dish--veg':''}"><button class="dish__b testable" type="button"><span class="dish__ico">${svg(use(ic))}</span><span class="dish__t"><span class="dish__k">${k}</span><span class="dish__v">${v}</span><span class="pl" lang="pl">${pl}</span>${veg?'<span class="badge">végétarien</span>':''}</span></button></li>`;
+
+const MENU={
+  bk:[['tartine','Le pain','du pain avec de la confiture','chleb z dżemem'],['cereals','Les céréales','des céréales avec du lait','płatki z mlekiem'],['juice','Le jus','un jus de fruits','sok owocowy'],['cocoa','La boisson','un chocolat chaud','gorąca czekolada']],
+  lu:[['carrot','L’entrée','des carottes râpées','surówka z marchewki'],['drumstick','Le plat','du poulet rôti, de la ratatouille et du riz','pieczony kurczak, ratatuj i ryż'],['pie','Le plat','une quiche aux légumes et une salade verte','quiche z warzywami i zielona sałata',1],['cheese','Le fromage','un petit fromage','mały ser'],['apple','Le dessert','une pomme','jabłko']],
+  di:[['soup','L’entrée','une soupe de légumes','zupa jarzynowa'],['cheese','Le plat','un gratin de pâtes','zapiekanka makaronowa'],['yogurt','Le laitage','un yaourt','jogurt'],['apple','Le dessert','une compote de pommes','mus jabłkowy']]
+};
+const STEPS=[
+  [use('card'),'Je passe ma carte.','Przykładam kartę.'],
+  [use('tray'),'Je prends un plateau et des couverts.','Biorę tacę i sztućce.'],
+  [use('queue'),'J’attends dans la file.','Czekam w kolejce.'],
+  [use('bubble'),'Je dis bonjour et merci.','Mówię dzień dobry i dziękuję.'],
+  [use('plate'),'Je mange au self. Je ne sors pas la nourriture.','Jem w stołówce. Nie wynoszę jedzenia.'],
+  ['<use href="#i-tray" x="4" y="26" width="84" height="84"/><use href="#i-arrow" x="30" y="-6" width="90" height="90"/>','Je rends mon plateau.','Oddaję tacę.']
+];
+const RULES=[
+  [use('drop'),'Je me lave les mains.','Myję ręce.'],
+  [use('clock'),'J’attends les autres.','Czekam na innych.'],
+  ['<use href="#i-plate" x="29" y="29" width="62" height="62"/><use href="#i-fork" x="-6" y="30" width="60" height="60"/><use href="#i-knife" x="66" y="30" width="60" height="60"/>','Le couteau est à droite. La fourchette est à gauche.','Nóż leży po prawej. Widelec leży po lewej.'],
+  [use('mouth')+'<use class="mm" href="#i-no"/>','Je ne parle pas la bouche pleine.','Nie mówię z pełnymi ustami.'],
+  [use('elbow')+'<use class="mm" href="#i-no"/>','Pas de coudes sur la table.','Bez łokci na stole.'],
+  [use('wave'),'Je parle doucement.','Mówię cicho.'],
+  [use('bin')+'<use class="mm" href="#i-no"/>','Je ne gaspille pas la nourriture.','Nie marnuję jedzenia.'],
+  [use('heart'),'Je dis merci et je range ma chaise.','Dziękuję i zasuwam krzesło.']
+];
+const BK=[['croissant','le croissant','rogalik'],['baguette','la baguette','bagietka'],['tartine','la tartine','kromka chleba'],['jam','la confiture','dżem'],['cereals','les céréales','płatki śniadaniowe'],['milk','le lait','mleko'],['juice','le jus de fruits','sok owocowy'],['cocoa','le chocolat chaud','gorąca czekolada']];
+const SELF=[['tray','le plateau','taca'],['plate','l’assiette','talerz'],['knife','le couteau','nóż'],['fork','la fourchette','widelec'],['spoon','la cuillère','łyżka'],['glass','le verre','szklanka'],['cheese','le fromage','ser'],['apple','la pomme','jabłko'],['yogurt','le yaourt','jogurt']];
+const TAGS=[['tray','le self','stołówka samoobsługowa'],['house','l’internat','internat'],['queue','la file','kolejka'],['elbow','le coude','łokieć'],['bin','gaspiller','marnować'],['tartine','le goûter','podwieczorek'],['leaf','végétarien','wegetariański'],['carrot','l’entrée','przystawka'],['drumstick','le plat principal','danie główne'],['apple','le dessert','deser']];
+const PHRASES=[['Bonjour, je voudrais le plat du jour, s’il vous plaît.','Dzień dobry, poproszę danie dnia.'],['Qu’est-ce que c’est ?','Co to jest?'],['Est-ce que c’est végétarien ?','Czy to jest wegetariańskie?'],['Un peu de riz, s’il vous plaît.','Poproszę trochę ryżu.'],['Pas trop, merci.','Niezbyt dużo, dziękuję.'],['De l’eau, s’il vous plaît.','Poproszę wodę.'],['Pardon, la place est libre ?','Przepraszam, czy to miejsce jest wolne?'],['Où est-ce que je rends le plateau ?','Gdzie oddaję tacę?'],['À quelle heure est le dîner ?','O której jest kolacja?'],['Je n’aime pas ça.','Nie lubię tego.'],['C’est très bon !','To jest bardzo dobre!'],['Bon appétit !','Smacznego!']];
+const DLG=[['a','Bonjour !','Dzień dobry!'],['b','Bonjour ! Qu’est-ce que vous voulez ?','Dzień dobry! Co podać?'],['a','Je voudrais le poulet avec du riz, s’il vous plaît.','Poproszę kurczaka z ryżem.'],['b','Voilà. Et comme dessert ?','Proszę. A na deser?'],['a','Une pomme, s’il vous plaît.','Jabłko, poproszę.'],['b','Voilà. Bon appétit !','Proszę. Smacznego!'],['a','Merci, bonne journée !','Dziękuję, miłego dnia!']];
+const QUIZ=[
+  ['À quelle heure est le petit-déjeuner ?',['À 12 h.','À 7 h.','À 19 h.'],1],
+  ['Qu’est-ce que tu dis au self ?',['Donne-moi le poulet !','Le poulet. Vite.','Je voudrais le poulet, s’il vous plaît.'],2],
+  ['Où est la fourchette ?',['À gauche de l’assiette.','À droite de l’assiette.','Au centre de la table.'],0],
+  ['Quel est le plat végétarien du jour ?',['Le poulet rôti.','Le riz au poulet.','La quiche aux légumes.'],2],
+  ['Que fait-on avec le plateau à la fin ?',['On l’emporte dans la chambre.','On le rend.','On le laisse sur la table.'],1]
+];
+safe(()=>{
+  $('#m-bk').innerHTML=MENU.bk.map(a=>dish(...a)).join('');
+  $('#m-lu').innerHTML=MENU.lu.map(a=>dish(...a)).join('');
+  $('#m-di').innerHTML=MENU.di.map(a=>dish(...a)).join('');
+  const st=$('#steps');
+  st.insertAdjacentHTML('beforeend',STEPS.map((s,i)=>`<article class="step" data-lit style="--ct:var(--${CY[i%5]}-t)"><button class="step__card testable" type="button"><span class="step__ico">${svg(s[0])}</span><span class="step__txt"><span class="fr">${s[1]}</span><span class="pl" lang="pl">${s[2]}</span></span></button><span class="step__n">${i+1}</span></article>`).join(''));
+  $('#rules').innerHTML=RULES.map((r,i)=>item(r[0],r[1],r[2],i,'rule')).join('');
+  $('#g-bk').innerHTML=BK.map((a,i)=>item(use(a[0]),a[1],a[2],i)).join('');
+  $('#g-self').innerHTML=SELF.map((a,i)=>item(use(a[0]),a[1],a[2],i+2)).join('');
+  $('#g-tags').innerHTML=TAGS.map((a,i)=>`<button class="tag testable" type="button" style="--c:var(--${CY[(i+1)%5]}-t);--r:${i%2?1.2:-1.4}deg"><span class="tag__ico">${svg(use(a[0]))}</span><span class="tag__t"><span class="fr">${a[1]}</span><span class="pl" lang="pl">${a[2]}</span></span></button>`).join('');
+  $('#phrases').innerHTML=PHRASES.map((p,i)=>`<button class="phrase testable" type="button" style="--c:var(--${CY[i%5]}-t);--r:${[-.7,.5,-.3,.8,-.6][i%5]}deg"><span class="fr">${p[0]}</span><span class="pl" lang="pl">${p[1]}</span></button>`).join('');
+  $('#dlg').innerHTML=DLG.map(d=>`<button class="say testable ${d[0]}" type="button"><span class="who">${d[0]==='a'?'L’élève':'Le personnel'}</span><span class="fr">${d[1]}</span><span class="pl" lang="pl">${d[2]}</span></button>`).join('');
+  $('#quiz-list').innerHTML=QUIZ.map((q,i)=>`<li class="q" data-a="${q[2]}" style="--ct:var(--${CY[(i+2)%5]}-t)"><p class="q__t">${q[0]}</p><div class="opts">${q[1].map(o=>`<button class="opt" type="button">${o}</button>`).join('')}</div><p class="q__fb" aria-live="polite"></p></li>`).join('');
+});
+
+/* French typography: keep ? ! : ; on the line with the word before them */
+safe(()=>{
+  const w=D.createTreeWalker(D.body,NodeFilter.SHOW_TEXT),ns=[];
+  while(w.nextNode())ns.push(w.currentNode);
+  ns.forEach(n=>{
+    const p=n.parentElement;
+    if(!p||p.closest('script,style,[lang=pl],[lang=en]'))return;
+    if(/ [?!:;]/.test(n.nodeValue))n.nodeValue=n.nodeValue.replace(/ ([?!:;])/g,' $1');
+  });
+});
+
+/* ---------- interactions ---------- */
+safe(()=>{
+  D.addEventListener('click',e=>{const t=e.target.closest&&e.target.closest('.testable');if(t)t.classList.toggle('rv')});
+  const qs=$$('.q'),sc=$('#score');let score=0;
+  qs.forEach(q=>{
+    const ans=+q.dataset.a,opts=$$('.opt',q);
+    opts.forEach((b,i)=>b.addEventListener('click',()=>{
+      if(q.classList.contains('done'))return;
+      q.classList.add('done');
+      const ok=i===ans;if(ok)score++;
+      b.classList.add(ok?'ok':'no');if(!ok)opts[ans].classList.add('ok');
+      $('.q__fb',q).textContent=ok?'Oui, c’est ça !':'Pas tout à fait. La bonne réponse : '+opts[ans].textContent;
+      const s=D.createElement('span');s.className='stamp '+(ok?'is-ok':'is-no');s.textContent=ok?'Bravo !':'Encore !';q.appendChild(s);
+      sc.textContent=score+' / '+qs.length;
+    }));
+  });
+  $('#again').addEventListener('click',()=>{score=0;sc.textContent='0 / '+qs.length;qs.forEach(q=>{q.classList.remove('done');$$('.opt',q).forEach(o=>o.classList.remove('ok','no'));$('.q__fb',q).textContent='';$$('.stamp',q).forEach(s=>s.remove())})});
+});
+
+/* ---------- letters ---------- */
+function split(el){
+  let n=0;
+  const walk=node=>{
+    Array.from(node.childNodes).forEach(c=>{
+      if(c.nodeType===3){
+        const frag=D.createDocumentFragment();
+        c.textContent.split(/([ \t\r\n\f]+)/).forEach(t=>{
+          if(!t)return;
+          if(/^[ \t\r\n\f]+$/.test(t)){frag.appendChild(D.createTextNode(' '));return}
+          const w=D.createElement('span');w.className='wd';w.setAttribute('aria-hidden','true');
+          Array.from(t).forEach(ch=>{const s=D.createElement('span');s.className='l';s.dataset.c=ch;s.textContent=ch;s.style.setProperty('--i',n++);w.appendChild(s)});
+          frag.appendChild(w);
+        });
+        node.replaceChild(frag,c);
+      }else if(c.nodeType===1&&c.tagName!=='BR')walk(c);
+    });
+  };
+  if(!el.hasAttribute('aria-label'))el.setAttribute('aria-label',el.textContent.replace(/\s+/g,' ').trim());
+  walk(el);
+}
+const boil=$$('[data-boil]');
+safe(()=>boil.forEach(split));
+/* ---------- paper sheets with cut edges ---------- */
+function rng(seed){let s=seed>>>0;return()=>{s=(s+0x6D2B79F5)>>>0;let t=s;t=Math.imul(t^(t>>>15),t|1);t^=t+Math.imul(t^(t>>>7),t|61);return((t^(t>>>14))>>>0)/4294967296}}
+function cutPoly(w,h,seed){
+  const r=rng(seed),A=clamp(Math.min(w,h)*.012,3,7);
+  const nx=clamp(Math.round(w/62),5,26),ny=clamp(Math.round(h/62),4,30);
+  const P=[],j=()=>(r()*A).toFixed(1),pc=(i,n)=>(i/n*100+(r()-.5)*1.2).toFixed(2)+'%';
+  for(let i=0;i<=nx;i++)P.push((i===0?'0px':i===nx?'100%':pc(i,nx))+' '+j()+'px');
+  for(let i=1;i<ny;i++)P.push('calc(100% - '+j()+'px) '+pc(i,ny));
+  for(let i=nx;i>=0;i--)P.push((i===nx?'100%':i===0?'0px':pc(i,nx))+' calc(100% - '+j()+'px)');
+  for(let i=ny-1;i>=1;i--)P.push(j()+'px '+pc(i,ny));
+  return 'polygon('+P.join(',')+')';
+}
+function cutAll(){$$('.sheet').forEach((el,i)=>el.style.setProperty('--clip',cutPoly(el.offsetWidth,el.offsetHeight,i*977+13)))}
+
+/* ---------- the poster world (canvas) ---------- */
+const cv=$('#world'),cx=cv&&cv.getContext('2d',{alpha:false});
+let W=innerWidth,H=innerHeight,DPR=1,U=Math.sqrt(W*H);
+const HT=D.createElement('canvas');HT.width=HT.height=256;
+function buildHT(){
+  const g=HT.getContext('2d');g.clearRect(0,0,256,256);g.fillStyle=COL.pink;
+  const sp=12;
+  for(let r=0,y=0;y<256+sp;y+=sp,r++){for(let x=(r%2?sp/2:0);x<256+sp;x+=sp){const d=Math.hypot(x-128,y-128)/128,rr=sp*.5*ss((d-.12)/.95);if(rr>.5){g.beginPath();g.arc(x,y,rr,0,6.2832);g.fill()}}}
+}
+let sized=false;
+function fit(){
+  if(!cv)return;
+  const w=innerWidth,h=innerHeight;
+  if(!sized||w!==W||Math.abs(h-H)>80){
+    sized=true;
+    W=w;H=h;U=Math.sqrt(W*H);DPR=Math.min(devicePixelRatio||1,1.5);
+    pickScenes();
+    cv.width=Math.round(W*DPR);cv.height=Math.round(H*DPR);
+    cx.setTransform(DPR,0,0,DPR,0,0);
+  }
+}
+/* x, y, size, turn, leaf-ness, strength */
+const SC=[
+/*hero*/    [[.95,.13,.30,0.15,0,.95],[.04,.95,.26,0.9,0,.95],[.74,.72,.17,0,0,.95],[.55,.95,.12,.9,.85,.95],[.52,.06,.05,0,0,.9],[.95,.86,.06,.5,.5,.9],[.03,.46,.04,0,0,.9],[.80,.95,.07,-.6,.9,.9]],
+/* blob order: big pink, big blue, yellow halftone, green leaf, then four small accents (pink, blue, yellow, green).
+   Big blobs mostly keep their side of the screen; a change between sections is a rise, a sink, a grow, a shrink or a turn. */
+/*horaires: the yellow rises like a sun, pink sinks*/
+            [[.97,.88,.20,-0.2,.15,.92],[.03,.62,.20,0.2,.1,.92],[.86,.22,.22,0,0,.95],[.12,.98,.13,1.8,.85,.9],[.60,.03,.05,0,0,.9],[.97,.52,.06,.3,.5,.9],[.07,.20,.05,0,0,.9],[.70,.97,.07,-.2,.9,.9]],
+/*menu: round plates; pink and blue grow, the sun shrinks away up*/
+            [[.94,.72,.27,0.25,0,.92],[.04,.94,.26,-0.1,0,.92],[.80,.02,.12,0,0,.95],[.06,.18,.12,2.6,.9,.9],[.48,.98,.06,0,0,.9],[.98,.28,.07,.6,.4,.9],[.30,.04,.05,0,0,.9],[.02,.50,.06,.4,.9,.9]],
+/*regles: everything tightens and lifts, the yellow drops in from above*/
+            [[.96,.40,.18,-0.1,.3,.9],[.06,.70,.18,0.3,.4,.92],[.92,.93,.18,0,0,.95],[.08,.12,.15,3.2,.9,.9],[.97,.10,.05,0,0,.9],[.03,.96,.07,.9,.5,.9],[.55,.02,.05,0,0,.9],[.42,.98,.07,1.2,.9,.9]],
+/*savoir: the place setting comes forward and grows (plate, fork, knife, glass); the cup sinks, the napkin drops to the corner*/
+            [[.90,.60,.24,0,.2,.92],[.04,.30,.20,1.2,.2,.92],[.95,.97,.13,0,0,.95],[.07,.90,.16,3.4,.9,.9],[.97,.10,.05,0,0,.9],[.03,.96,.07,.9,.5,.9],[.55,.02,.05,0,0,.9],[.42,.98,.07,1.2,.9,.9]],
+/*mots: a playful scatter, the yellow swells*/
+            [[.97,.16,.14,0.3,.5,.9],[.02,.40,.22,-0.2,.2,.92],[.94,.70,.25,0,0,.95],[.12,.95,.18,3.6,.85,.9],[.30,.03,.07,0,0,.9],[.62,.98,.06,1.2,.5,.9],[.03,.88,.06,0,0,.9],[.97,.96,.08,1.5,.9,.9]],
+/*parler: two big shapes face each other like speech bubbles*/
+            [[.95,.86,.25,-0.25,.2,.9],[.04,.16,.24,0.15,.1,.92],[.96,.28,.14,0,0,.95],[.04,.78,.14,4.0,.9,.9],[.50,.02,.05,0,0,.9],[.98,.58,.06,1.6,.4,.9],[.40,.98,.05,0,0,.9],[.10,.48,.07,2.0,.9,.9]],
+/*quiz: they turn and swap height*/
+            [[.92,.20,.21,0.1,.1,.9],[.06,.86,.21,-0.3,.3,.92],[.95,.80,.20,0,0,.95],[.06,.24,.13,4.4,.9,.9],[.02,.55,.06,0,0,.9],[.55,.03,.06,2.0,.5,.9],[.98,.50,.05,0,0,.9],[.62,.98,.07,2.4,.9,.9]],
+/*fin: pink lifts to the top, blue swells at the bottom, the yellow rises from below*/
+            [[.86,.06,.23,-0.15,0,.95],[.08,1.16,.30,0.2,.2,.95],[.70,1.12,.22,0,0,.95],[.32,.04,.14,4.8,.9,.95],[.97,.40,.08,0,0,.9],[.03,.45,.06,2.2,.5,.9],[.75,.97,.06,0,0,.9],[.97,.75,.08,2.6,.9,.9]]
+];
+/* tall, narrow screens: the big titles need clear paper, so the hero and the finale get their own compositions */
+const SCP={
+  0:[[.95,-.10,.22,0.15,0,.95],[.06,1.0,.30,-0.4,0,.95],[.92,.68,.15,0,0,.95],[.97,.38,.10,.9,.85,.95],[.62,.02,.06,0,0,.9],[.97,.56,.07,.5,.5,.9],[.02,.60,.05,0,0,.9],[.50,1.0,.08,-.6,.9,.9]],
+  8:[[.90,.10,.26,-0.15,0,.95],[.06,.92,.26,0.2,.2,.95],[.86,.80,.18,0,0,.95],[.42,-.02,.12,4.8,.9,.95],[.97,.50,.06,0,0,.9],[.04,.30,.07,2.2,.5,.9],[.50,.99,.06,0,0,.9],[.62,.03,.07,2.6,.9,.9]]
+};
+const SCL={0:SC[0],8:SC[8]};
+function pickScenes(){const p=innerWidth/Math.max(innerHeight,1)<.9;SC[0]=p?SCP[0]:SCL[0];SC[8]=p?SCP[8]:SCL[8]}
+pickScenes();
+/* The table, seen from above: tableware cut from flat ink. Slots 0 to 3 follow the scenes in SC
+   (x, y, size, turn, unused, alpha). k = what is drawn, c = main ink, d = parallax depth, spin = turn per screen scrolled.
+   Slots 4 to 7 are laid next to a dish (at = its slot): a place setting travels together. ox, oy = offset in the
+   dish's radii, in the dish's own frame; r = extra turn (-pi/2 = pointing up the table); sz = size in dish radii.
+   Their rows in SC are not used for position, only kept so every scene has 8 rows. */
+const BL=[
+  {k:'plate',c:'pink',d:1.0,a:.92,spin:.003},
+  {k:'bowl',c:'blue',d:.8,a:.92,spin:-.003},
+  {k:'cup',c:'yellow',d:1.3,a:.95,spin:.008},
+  {k:'napkin',c:'green',d:.6,a:.9,spin:.01},
+  {k:'fork',c:'pink',at:0,ox:-1.3,oy:.08,r:-1.5708,sz:1,a:.92},
+  {k:'knife',c:'blue',at:0,ox:1.28,oy:.08,r:-1.5708,sz:1,a:.92},
+  {k:'spoon',c:'orange',at:1,ox:1.3,oy:.12,r:-1.5708,sz:1,a:.92},
+  {k:'glass',c:'blue',at:0,ox:1.32,oy:-1.12,r:0,sz:.3,a:.9}
+];
+const st=SC[0].map(b=>b.slice());
+if(!reduce)st.forEach(b=>{b[2]*=.55});
+let secs=[],ph=0;
+const TAU=6.28318;
+function hash(a,b,c){const s=Math.sin(a*127.1+b*311.7+c*74.7)*43758.5453;return(s-Math.floor(s))*2-1}
+/* a hand-cut closed outline: amp 1 is a loose blob, about .25 a cut-paper circle */
+function path(X,Y,Rr,rot,lens,seed,q,amp){
+  const N=12,P=[],A=amp==null?1:amp;
+  for(let k=0;k<N;k++){
+    const a=k/N*TAU,c=Math.abs(Math.cos(a));
+    const m=1-lens*(1-(.36+.64*Math.pow(c,1.3)));
+    const w=1+A*((.09+.025*Math.sin(q*.8+seed))*Math.sin(a*3+seed*1.7)+(.055+.02*Math.cos(q*.6+seed*.5))*Math.cos(a*2+seed*.9)+.03*Math.sin(a*5+seed*2.3+q*.35)+.03*hash(seed,k,0));
+    const r=Rr*m*w,aa=a+rot;
+    P.push(Math.cos(aa)*r,Math.sin(aa)*r);
+  }
+  cx.beginPath();
+  let first=true;
+  for(let k=0;k<N;k++){
+    const i0=((k+N-1)%N)*2,i1=k*2,i2=((k+1)%N)*2,i3=((k+2)%N)*2;
+    for(let s=0;s<4;s++){
+      const t=s/4,t2=t*t,t3=t2*t;
+      const x=.5*(2*P[i1]+(-P[i0]+P[i2])*t+(2*P[i0]-5*P[i1]+4*P[i2]-P[i3])*t2+(-P[i0]+3*P[i1]-3*P[i2]+P[i3])*t3);
+      const y=.5*(2*P[i1+1]+(-P[i0+1]+P[i2+1])*t+(2*P[i0+1]-5*P[i1+1]+4*P[i2+1]-P[i3+1])*t2+(-P[i0+1]+3*P[i1+1]-3*P[i2+1]+P[i3+1])*t3);
+      if(first){cx.moveTo(X+x,Y+y);first=false}else cx.lineTo(X+x,Y+y);
+    }
+  }
+  cx.closePath();
+}
+/* small drawing kit, all in the object's own coordinates (origin = its centre, x = its long axis) */
+let A=1,ROT=0;
+const disc=(r,seed,q,amp)=>path(0,0,r,0,0,seed,q,amp==null?.25:amp);
+const fill=(col,a)=>{cx.globalAlpha=a*A;cx.fillStyle=col;cx.fill()};
+const line=(col,a,w)=>{cx.globalAlpha=a*A;cx.strokeStyle=col;cx.lineWidth=w;cx.lineCap='round';cx.lineJoin='round';cx.stroke()};
+const paper=fn=>{cx.globalCompositeOperation='source-over';fn();cx.globalCompositeOperation='multiply'};
+/* the riso keyline: the same outline printed a few pixels off */
+const key=shape=>{cx.save();const kc=Math.cos(-ROT),ks=Math.sin(-ROT);cx.translate(6*kc-5*ks,6*ks+5*kc);shape();cx.restore();line(COL.ink,.85,2.2)};
+function rr(x,y,w,h,r){r=Math.min(r,w/2,h/2);cx.moveTo(x+r,y);cx.arcTo(x+w,y,x+w,y+h,r);cx.arcTo(x+w,y+h,x,y+h,r);cx.arcTo(x,y+h,x,y,r);cx.arcTo(x,y,x+w,y,r);cx.closePath()}
+/* cereal rings in the bowl, in bowl radii: placed once from a fixed seed, each at least .24 from every other
+   (ring .075 + stroke .02 on each side, plus a gap) and inside the milk (.78) with a margin */
+const CEREAL=(()=>{const r=rng(4242),out=[],min=.24,lim=.78-.095-.04;let tries=0;
+  while(out.length<11&&tries++<4000){const a=r()*TAU,d=Math.sqrt(r())*lim,x=Math.cos(a)*d,y=Math.sin(a)*d;if(out.every(c=>Math.hypot(c[0]-x,c[1]-y)>=min))out.push([x,y])}
+  return out})();
+const DRAW={
+  plate(R,s,q,c){
+    disc(R,s,q);fill(c,1);key(()=>disc(R,s+4,q));
+    disc(R*.68,s+1,q,.15);fill(c,.32);line(COL.ink,.5,Math.max(2,R*.012));
+    paper(()=>{cx.beginPath();cx.arc(0,0,R*.84,-2.6,-1.75);line(COL.sheet,.75,Math.max(3,R*.035))});
+  },
+  bowl(R,s,q,c){
+    disc(R,s,q);fill(c,1);key(()=>disc(R,s+4,q));
+    paper(()=>{disc(R*.78,s+2,q,.15);fill(COL.sheet,.95)});
+    disc(R*.78,s+2,q,.15);line(COL.ink,.45,Math.max(2,R*.012));
+    const ring=['yellow','pink','orange','yellow','green','pink','orange','yellow','pink','orange','green'];
+    CEREAL.forEach((c,i)=>{cx.beginPath();cx.arc(c[0]*R,c[1]*R,R*.075,0,TAU);line(COL[ring[i%ring.length]],.95,Math.max(2.5,R*.04))});
+  },
+  cup(R,s,q,c){
+    disc(R,s,q);fill(c,1);
+    cx.save();disc(R,s,q);cx.clip();cx.globalAlpha=.8*A;cx.drawImage(HT,-R*1.08,-R*1.08,R*2.16,R*2.16);cx.restore();
+    key(()=>disc(R,s+4,q));
+    disc(R*.8,s+1,q,.1);line(COL.ink,.35,Math.max(2,R*.01));
+    paper(()=>{cx.beginPath();rr(R*.38,-R*.11,R*.44,R*.22,R*.11);fill(COL.sheet,1);line(COL.ink,.9,2.4)});
+    paper(()=>{disc(R*.52,s+3,q,.12);fill(COL.sheet,1);line(COL.ink,.9,2.4)});
+    disc(R*.41,s+5,q,.12);fill(COL.orange,.95);fill(COL.ink,.3);
+    paper(()=>{cx.beginPath();cx.arc(0,0,R*.3,-2.5,-1.6);line(COL.sheet,.55,Math.max(2,R*.03))});
+  },
+  napkin(R,s,q,c){
+    const h=R*.78,sq=()=>{cx.beginPath();rr(-h,-h,h*2,h*2,R*.1)};
+    sq();fill(c,1);key(sq);
+    cx.beginPath();cx.moveTo(-h,-h);cx.lineTo(h,-h);cx.lineTo(h,h);cx.closePath();fill(c,.4);
+    cx.beginPath();cx.moveTo(-h,-h);cx.lineTo(h,h);line(COL.ink,.45,2);
+    paper(()=>{cx.beginPath();rr(-h*.84,-h*.84,h*1.68,h*1.68,R*.06);cx.setLineDash([R*.07,R*.06]);line(COL.sheet,.7,Math.max(2,R*.02));cx.setLineDash([])});
+  },
+  fork(R,s,q,c){
+    const L=R*1.75,w=L*.06,sh=()=>{cx.beginPath();rr(-L/2,-w/2,L*.62,w,w/2);
+      cx.moveTo(L*.1,-w/2);cx.lineTo(L*.2,-w*1);cx.lineTo(L*.32,-w*1);cx.lineTo(L*.32,w*1);cx.lineTo(L*.2,w*1);cx.lineTo(L*.1,w/2);cx.closePath();
+      for(let i=0;i<4;i++){const y=-w+w*.08+i*(w*2-w*.16)/3-w*.15;rr(L*.28,y,L*.22,w*.3,w*.15)}};
+    sh();fill(c,1);key(sh);
+  },
+  knife(R,s,q,c){
+    const L=R*1.75,w=L*.065,sh=()=>{cx.beginPath();rr(-L/2,-w*.6,L*.46,w*1.2,w*.6);
+      cx.moveTo(-L*.06,-w*.42);cx.lineTo(L*.38,-w*.5);cx.quadraticCurveTo(L*.52,-w*.42,L*.5,w*.45);cx.lineTo(-L*.06,w*.45);cx.closePath()};
+    sh();fill(c,1);key(sh);
+    paper(()=>{for(const x of[-L*.36,-L*.22]){cx.beginPath();cx.arc(x,0,w*.16,0,TAU);fill(COL.sheet,.9)}});
+  },
+  spoon(R,s,q,c){
+    const L=R*1.6,w=L*.06,sh=()=>{cx.beginPath();rr(-L/2,-w*.4,L*.64,w*.8,w*.4);cx.ellipse(L*.3,0,L*.18,w*1.55,0,0,TAU)};
+    sh();fill(c,1);key(sh);
+    cx.beginPath();cx.ellipse(L*.31,0,L*.12,w*1.05,0,0,TAU);fill(c,.35);
+    paper(()=>{cx.beginPath();cx.ellipse(L*.33,-w*.3,L*.07,w*.32,0,0,TAU);fill(COL.sheet,.6)});
+  },
+  glass(R,s,q,c){
+    disc(R,s,q,.12);fill(c,.32);key(()=>disc(R,s+4,q,.12));
+    disc(R,s,q,.12);line(COL.ink,.9,2.4);
+    disc(R*.8,s+1,q,.1);line(c,.75,Math.max(3,R*.06));
+    paper(()=>{cx.beginPath();cx.arc(0,0,R*.62,-2.7,-1.9);line(COL.sheet,.8,Math.max(3,R*.06))});
+  }
+};
+/* q = scroll phase (screens scrolled, eased). The pieces turn a little only while the page moves. */
+function draw(q){
+  if(!cx)return;
+  cx.globalCompositeOperation='source-over';cx.globalAlpha=1;cx.fillStyle=COL.paper;cx.fillRect(0,0,W,H);
+  cx.globalCompositeOperation='multiply';
+  const rots=[];
+  for(let j=0;j<BL.length;j++){
+    const d=BL[j],b=st[d.at==null?j:d.at];
+    let R0=b[2]*U,X=b[0]*W,Y=b[1]*H;
+    if(R0<2||b[5]<.03)continue;
+    if(d.at==null){ROT=b[3]+q*d.spin*9;rots[j]=ROT}
+    else{const ra=rots[d.at]||0,c=Math.cos(ra),s=Math.sin(ra);X+=(d.ox*c-d.oy*s)*R0;Y+=(d.ox*s+d.oy*c)*R0;ROT=ra+d.r;R0*=d.sz}
+    A=b[5]*d.a;
+    cx.save();cx.translate(X,Y);cx.rotate(ROT);
+    DRAW[d.k](R0,j*13.7,q,COL[d.c]);
+    cx.restore();
+  }
+  cx.globalAlpha=1;cx.globalCompositeOperation='source-over';
+}
+function measure(){
+  const els=$$('[data-scene]');
+  secs=els.map(el=>({el,top:el.getBoundingClientRect().top+scrollY}));
+  for(let k=1;k<secs.length;k++){
+    const prevH=secs[k].top-secs[k-1].top,nextH=(k+1<secs.length?secs[k+1].top:secs[k].top+prevH)-secs[k].top;
+    secs[k].zone=Math.max(110,Math.min(320,Math.min(prevH,nextH)*.28));
+    secs[k].b=secs[k].top;
+  }
+  /* the finale is a short section at the very end: start its change early so the last scene is fully reached */
+  if(secs.length>1){const L=secs[secs.length-1];L.b=L.top-H*.45;L.zone=Math.min(L.zone,H*.25)}
+  /* a short hero (phones) must still show its own composition at the top: the first change starts only once you scroll */
+  if(secs.length>2){const F=secs[1];F.b=Math.max(F.b,H*.5+F.zone+1)}
+  const end=D.documentElement.scrollHeight;
+  secs.forEach((s,k)=>{s.mid=k===0?H*.5:(s.top+(k+1<secs.length?secs[k+1].top:end))/2});
+}
+/* target state: the blend of two scenes, each pushed up or down by depth parallax around its own section's middle */
+const tgt=SC[0].map(b=>b.slice());
+function target(t,par){
+  const vy=scrollY+H*.5;
+  const pa=par&&secs[t.lo]?clamp(-(vy-secs[t.lo].mid)/H*.2,-.24,.24):0,pb=par&&secs[t.lo+1]?clamp(-(vy-secs[t.lo+1].mid)/H*.2,-.24,.24):0;
+  for(let j=0;j<8;j++){
+    const A=SC[t.lo][j],B=SC[t.lo+1][j],dd=BL[j].d||1;
+    for(let p=0;p<6;p++)tgt[j][p]=lerp(A[p],B[p],t.f);
+    tgt[j][1]+=lerp(pa,pb,t.f)*dd;
+  }
+  return tgt;
+}
+function sceneT(){
+  const vy=scrollY+H*.5;let c=0;
+  for(let k=1;k<secs.length;k++){const z=secs[k].zone;c+=ss((vy-(secs[k].b-z))/(z*2))}
+  const lo=Math.max(0,Math.min(Math.floor(c),SC.length-2));
+  return{lo,f:clamp(c-lo,0,1),c};
+}
+function drawStatic(){
+  const t=sceneT();
+  const g=target(t,false);for(let j=0;j<8;j++)for(let p=0;p<6;p++)st[j][p]=g[j][p];
+  draw(0);
+}
+/* eases the shown state toward the scroll target; skips the draw when nothing has moved */
+let dirty=true;
+const burstG=$('.burst .spin');
+function worldStep(dt){
+  const t=sceneT(),k=1-Math.exp(-dt*3.6);let mv=0;
+  const g=target(t,true);for(let j=0;j<8;j++)for(let p=0;p<6;p++){const d=(g[j][p]-st[j][p])*k;st[j][p]+=d;mv=Math.max(mv,Math.abs(d))}
+  const pq=(scrollY/Math.max(H,1)-ph)*(1-Math.exp(-dt*3));ph+=pq;
+  if(!dirty&&mv<2e-5&&Math.abs(pq)<2e-4)return;
+  dirty=false;draw(ph);
+  if(burstG)burstG.style.setProperty('--br',(ph*38).toFixed(2)+'deg');
+}
+
+/* ---------- scroll-linked parts: the sun and the tray walking down the rail ---------- */
+const progEls=$$('[data-prog]');
+function measureLit(){
+  progEls.forEach(el=>{
+    const vert=el.dataset.axis==='y'||innerWidth<1080,r=el.getBoundingClientRect();
+    el._items=$$('[data-lit]',el).map(c=>{const b=c.getBoundingClientRect();return{el:c,pos:vert?((b.top+b.height/2)-r.top)/r.height:((b.left+b.width/2)-r.left)/r.width}});
+  });
+}
+function prog(dt){
+  progEls.forEach(el=>{
+    const r=el.getBoundingClientRect();
+    if(r.bottom<-200||r.top>H+200)return;
+    const p=clamp((H*.88-r.top)/(r.height+H*.3),0,1),tg=.03+.94*p;
+    if(el._s==null)el._s=tg;
+    const s=el._s+=(tg-el._s)*(1-Math.exp(-dt*6));
+    if(Math.abs(tg-s)<1e-4&&el._w===tg)return;el._w=tg;
+    el.style.setProperty('--s',s.toFixed(4));
+    if(el._items)el._items.forEach(it=>it.el.classList.toggle('lit',s>=it.pos-.03));
+  });
+}
+
+let revealCheck=()=>{};
+/* ---------- reveals ----------
+   Headings rise letter by letter when they come into view. Blocks (.rise) lay down and small items (.pop) pop in,
+   staggered by position within the batch that entered together. Each plays once. */
+safe(()=>{
+  if(reduce)return;
+  const RISE='.sec .sheet,.cta,.lede,.note,.tab,.card,.meal,.step__card,.tray,.q,.phrase,.say,.score';
+  const POP='.item,.tag';
+  $$(RISE).forEach(el=>el.classList.add('rise'));
+  $$(POP).forEach((el,i)=>{el.classList.add('pop');el.style.setProperty('--lr',(i%2?4:-4)+'deg')});
+  const hero=$('.hero');
+  $$('.rise,.pop',hero).forEach(el=>el.classList.add('is-in'));
+  const show=el=>{el.classList.add('is-in');const h=el.parentElement&&el.parentElement.closest('.hd');if(h)h.classList.add('is-in')};
+  const title=$('.title');if(title)requestAnimationFrame(()=>show(title));
+  /* A plain position check, not an IntersectionObserver: the observer counts clip-path (a sheet that has not
+     unrolled yet) as hiding everything inside, so landing in the middle of a long sheet left it hidden for good.
+     Anything whose top is above the bottom of the screen (plus 14%) plays, including things already scrolled past. */
+  let pending=$$('[data-boil],.rise:not(.is-in),.pop:not(.is-in)').filter(el=>el!==title);
+  function check(){
+    if(!pending.length)return;
+    const lim=innerHeight*1.14,inn=[];
+    pending=pending.filter(el=>{if(el.getBoundingClientRect().top<lim){inn.push(el);return false}return true});
+    if(!inn.length)return;
+    const pos=el=>{const r=el.getBoundingClientRect();return r.top*4+r.left};
+    inn.sort((a,b)=>pos(a)-pos(b));
+    const set=new Set(inn);let k=0;
+    inn.forEach(el=>{
+      if(el.matches('[data-boil]')){show(el);return}
+      const sh=el.parentElement&&el.parentElement.closest('.sheet');
+      const base=sh&&set.has(sh)?50:0,step=el.classList.contains('pop')?14:28;
+      el.style.setProperty('--d',Math.min(base+k*step,220)+'ms');k++;
+      show(el);
+    });
+  }
+  let q=0;const soon=()=>{if(!q)q=requestAnimationFrame(()=>{q=0;check()})};
+  addEventListener('scroll',soon,{passive:true});addEventListener('resize',soon);
+  revealCheck=soon;soon();
+});
+
+/* ---------- boot ---------- */
+function layoutAll(){fit();measure();cutAll();measureLit();dirty=true;revealCheck();if(reduce)drawStatic()}
+safe(()=>{buildHT();layoutAll()});
+let rt=0;
+addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(layoutAll,120)});
+safe(()=>{if(typeof ResizeObserver!=='undefined'){let ro=0;new ResizeObserver(()=>{clearTimeout(ro);ro=setTimeout(layoutAll,150)}).observe(D.body)}});
+safe(()=>{D.fonts&&D.fonts.ready.then(layoutAll)});
+if(reduce){
+  progEls.forEach(el=>{el.style.setProperty('--s','1');(el._items||[]).forEach(it=>it.el.classList.add('lit'))});
+  let q=0;addEventListener('scroll',()=>{if(q)return;q=requestAnimationFrame(()=>{q=0;drawStatic()})},{passive:true});
+}else{
+  ph=scrollY/Math.max(H,1);
+  let last=performance.now();
+  const loop=now=>{
+    const dt=Math.min(.05,Math.max(.001,(now-last)/1000));last=now;
+    safe(()=>worldStep(dt));
+    safe(()=>prog(dt));
+    requestAnimationFrame(loop);
+  };
+  requestAnimationFrame(loop);
+}
+window.__booted=true;
+})();
+</script>
+</body>
+</html>
